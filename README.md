@@ -17,10 +17,8 @@ You will get a URL like:
 git clone https://github.com/rctz/sfac-server-training-assignment.git
 ```
 
-cd sfac-server-training-assignment
-
 ```bash
-
+cd sfac-server-training-assignment
 ```
 
 ### 3. Create a new branch for your assignment
