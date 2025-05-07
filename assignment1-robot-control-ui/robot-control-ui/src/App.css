@@ -1,0 +1,29 @@
+.app-layout {
+  display: flex;
+  height: 100vh;
+  box-sizing: border-box;
+}
+
+.screen-wrapper {
+  flex: 0 0 80%;
+  min-width: 200px;
+  max-width: 600px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.joystick-wrapper {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+}
+
+.robot-canvas {
+  width: 100%;
+  max-width: 600px;
+  border: 2px solid #333;
+  background-color: #f9f9f9;
+}
