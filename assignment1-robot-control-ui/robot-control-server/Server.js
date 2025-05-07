@@ -10,42 +10,37 @@ const io = new Server(server, {
   cors: { origin: '*' }
 });
 
-let robot = {
-  position: { x: 150, y: 150 },
-  velocity: { x: 0, y: 0 },
-  dotRadius: 10,
-  limit: 300
-};
-
-io.on('connection', (socket) => {
-    console.log('✅ Server: client connected', socket.id);
+const robot = {
+    x: 150,
+    y: 150,
+    velocity: { x: 0, y: 0 }
+  };
+  
+  io.on('connection', (socket) => {
+    console.log('✅ Client connected:', socket.id);
+  
+    socket.emit('robot-update', { x: robot.x, y: robot.y });
   
     socket.on('joystick-move', ({ vx, vy }) => {
-      console.log('⬅️ Server got move:', { vx, vy });
+      console.log('⬅️ Move received:', { vx, vy });
       robot.velocity = { x: vx, y: vy };
     });
-
+  
     socket.on('joystick-stop', () => {
-        console.log('🛑 Server received joystick stop');
-        robot.velocity = { x: 0, y: 0 };
-      });
+      console.log('🛑 Stop received');
+      robot.velocity = { x: 0, y: 0 };
+    });
   
     socket.on('disconnect', () => {
-      console.log('❌ Server: client disconnected', socket.id);
+      console.log('❌ Client disconnected:', socket.id);
     });
   });
 
-setInterval(() => {
-  const { velocity, position, dotRadius, limit } = robot;
-  let nx = position.x + velocity.x;
-  let ny = position.y + velocity.y;
-
-  nx = Math.max(dotRadius, Math.min(limit - dotRadius, nx));
-  ny = Math.max(dotRadius, Math.min(limit - dotRadius, ny));
-  robot.position = { x: nx, y: ny };
-
-  io.emit('robot-update', robot.position);
-}, 16);
+  setInterval(() => {
+    robot.x += robot.velocity.x;
+    robot.y += robot.velocity.y;
+    io.emit('robot-update', { x: robot.x, y: robot.y });
+  }, 16);
 
 const PORT = 3001;
 server.listen(PORT, () => {
