@@ -6,7 +6,7 @@ import './App.css';
 
 const socket = io('http://localhost:3001');
 
-function App() {
+const App = () => {
   const [position, setPosition] = useState({ x: 150, y: 150 });
 
   useEffect(() => {
