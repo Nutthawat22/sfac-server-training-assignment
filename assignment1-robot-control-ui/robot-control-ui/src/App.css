@@ -1,3 +1,10 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
 .app-layout {
   display: flex;
   height: 100vh;
@@ -7,7 +14,6 @@
 .screen-wrapper {
   flex: 0 0 80%;
   min-width: 200px;
-  max-width: 600px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -24,7 +30,29 @@
 
 .robot-canvas {
   width: 100%;
-  max-width: 600px;
+  height: auto;
+  max-height: 100%;
+  aspect-ratio: 16 / 9;
   border: 2px solid #333;
   background-color: #f9f9f9;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .app-layout {
+    flex-direction: column;
+  }
+
+  .screen-wrapper,
+  .joystick-wrapper {
+    width: 100%;
+    flex: unset;
+    padding: 1%;
+  }
+
+  .joystick-wrapper {
+    flex-direction: column;
+    justify-content: center;
+    gap: 12px;
+  }
 }
