@@ -1,11 +1,9 @@
 import React, { useState, useEffect } from "react";
-import io from "socket.io-client";
+import socket from "./socket";
 import Screen from "./components/Screen";
 import JoystickControl from "./components/JoystickControl";
 import "./App.css";
 import Buttons from "./components/Buttons";
-
-const socket = io("http://localhost:3001");
 
 function App() {
   const [position, setPosition] = useState({ x: 150, y: 150 });
@@ -25,7 +23,7 @@ function App() {
     const magnitude = Math.hypot(x, y);
     if (magnitude === 0 || locked) return;
 
-    const speed = magnitude * 2;
+    const speed = magnitude * 0.15;
     const vx = (x / magnitude) * speed;
     const vy = -(y / magnitude) * speed;
 

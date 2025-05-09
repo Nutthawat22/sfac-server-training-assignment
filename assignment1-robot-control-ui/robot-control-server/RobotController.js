@@ -1,6 +1,6 @@
 let robot = {
-    x: 150,
-    y: 150,
+    x: 0.5,
+    y: 0.5,
     velocity: { x: 0, y: 0 },
     locked: false
   };
@@ -56,14 +56,13 @@ let robot = {
   function unlockRobot() {
     robot.locked = false;
   }
-  
   function updatePosition() {
     robot.x += robot.velocity.x;
     robot.y += robot.velocity.y;
   
     // Clamp position inside the screen
-    robot.x = Math.max(10, Math.min(screen.width - 10, robot.x));
-    robot.y = Math.max(10, Math.min(screen.height - 10, robot.y));
+    robot.x = Math.max(0, Math.min(1, robot.x));
+    robot.y = Math.max(0, Math.min(1, robot.y));
   }
   
   module.exports = {
