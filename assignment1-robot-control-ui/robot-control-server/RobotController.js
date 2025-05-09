@@ -6,6 +6,7 @@ let robot = {
   };
   
   const screen = { width: 600, height: 400 };
+  const speed = 0.05;
   
   /**
    * Get the current state of the robot
@@ -27,8 +28,8 @@ let robot = {
     if (robot.locked) return;
   
     const { vx, vy } = input;
-    robot.velocity.x = vx;
-    robot.velocity.y = vy;
+    robot.velocity.x = vx * speed;
+    robot.velocity.y = vy * speed;
   }
   
   /**
@@ -56,7 +57,7 @@ let robot = {
   function unlockRobot() {
     robot.locked = false;
   }
-  
+
   function updatePosition() {
     robot.x += robot.velocity.x;
     robot.y += robot.velocity.y;
