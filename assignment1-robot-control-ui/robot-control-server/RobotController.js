@@ -56,6 +56,7 @@ let robot = {
   function unlockRobot() {
     robot.locked = false;
   }
+  
   function updatePosition() {
     robot.x += robot.velocity.x;
     robot.y += robot.velocity.y;
