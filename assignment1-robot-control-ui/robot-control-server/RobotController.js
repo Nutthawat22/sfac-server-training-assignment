@@ -1,8 +1,9 @@
+/** @type {import('../shared/types').Robot} */
 let robot = {
-    x: 0.5,
-    y: 0.5,
-    velocity: { x: 0, y: 0 },
-    locked: false
+  x: 0.5,
+  y: 0.5,
+  locked: false,
+  velocity: { x: 0, y: 0 }
 };
 
 const screen = { width: 600, height: 400 };
