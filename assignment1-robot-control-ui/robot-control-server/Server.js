@@ -1,48 +1,61 @@
-const express = require('express');
-const http = require('http');
-const cors = require('cors');
 const { Server } = require('socket.io');
+const http = require('http');
+const express = require('express');
 
 const app = express();
-app.use(cors());
 const server = http.createServer(app);
 const io = new Server(server, {
-  cors: { origin: '*' }
+  cors: {
+    origin: '*'
+  }
 });
 
 const robot = {
-    x: 150,
-    y: 150,
-    velocity: { x: 0, y: 0 }
-  };
-  
-  io.on('connection', (socket) => {
-    console.log('✅ Client connected:', socket.id);
-  
-    socket.emit('robot-update', { x: robot.x, y: robot.y });
-  
-    socket.on('joystick-move', ({ vx, vy }) => {
-      console.log('⬅️ Move received:', { vx, vy });
-      robot.velocity = { x: vx, y: vy };
-    });
-  
-    socket.on('joystick-stop', () => {
-      console.log('🛑 Stop received');
-      robot.velocity = { x: 0, y: 0 };
-    });
-  
-    socket.on('disconnect', () => {
-      console.log('❌ Client disconnected:', socket.id);
-    });
+  x: 150,
+  y: 150,
+  velocity: { x: 0, y: 0 }
+};
+
+const dotRadius = 10;
+let screen = { width: 600, height: 400 };
+
+io.on('connection', (socket) => {
+  console.log('🚀 Client connected');
+
+  // Send initial position
+  socket.emit('robot-update', { x: robot.x, y: robot.y });
+
+  /** @param {import('../shared/types').JoystickInput} input */
+  socket.on('joystick-move', (input) => {
+    const { vx, vy } = input;
+    robot.velocity.x = vx;
+    robot.velocity.y = vy;
   });
 
-  setInterval(() => {
-    robot.x += robot.velocity.x;
-    robot.y += robot.velocity.y;
-    io.emit('robot-update', { x: robot.x, y: robot.y });
-  }, 16);
+  socket.on('joystick-stop', () => {
+    robot.velocity.x = 0;
+    robot.velocity.y = 0;
+  });
 
-const PORT = 3001;
-server.listen(PORT, () => {
-  console.log(`Robot backend listening on http://localhost:${PORT}`);
+  socket.on('disconnect', () => {
+    console.log('❌ Client disconnected');
+  });
+});
+
+// Server-side robot logic loop
+setInterval(() => {
+  robot.x += robot.velocity.x;
+  robot.y += robot.velocity.y;
+
+  // Clamp position inside the screen
+  robot.x = Math.max(dotRadius, Math.min(screen.width - dotRadius, robot.x));
+  robot.y = Math.max(dotRadius, Math.min(screen.height - dotRadius, robot.y));
+
+  /** @type {import('../shared/types').RobotState} */
+  const state = { x: robot.x, y: robot.y };
+  io.emit('robot-update', state);
+}, 16);
+
+server.listen(3001, () => {
+  console.log('✅ Server listening on http://localhost:3001');
 });

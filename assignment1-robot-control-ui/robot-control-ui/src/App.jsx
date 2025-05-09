@@ -30,21 +30,24 @@ const App = () => {
   }, []);
 
   const handleMove = ({ x, y }) => {
-    const mag = Math.hypot(x, y);
-    if (mag === 0) return;
-
-    const speed = mag * 2;
-    const vx = (x / mag) * speed;
-    const vy = -(y / mag) * speed;
-
-    console.log('➡️ Client sending move:', { vx, vy });
-    socket.emit('joystick-move', { vx, vy });
+    const magnitude = Math.hypot(x, y);
+    if (magnitude === 0) return;
+  
+    const speed = magnitude * 2;
+    const vx = (x / magnitude) * speed;
+    const vy = -(y / magnitude) * speed;
+  
+    socket.emit('joystick-move', {
+      vx,
+      vy,
+      timestamp: Date.now()
+    });
   };
-
+  
   const handleStop = () => {
-    console.log('⛔ Client sent stop');
     socket.emit('joystick-stop');
   };
+  
 
   return (
     <div className="app-layout">
