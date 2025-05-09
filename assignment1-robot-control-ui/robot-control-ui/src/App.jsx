@@ -1,53 +1,53 @@
-import React, { useState, useEffect } from 'react';
-import io from 'socket.io-client';
-import Screen from './components/Screen';
-import JoystickControl from './components/JoystickControl';
-import './App.css';
+import React, { useState, useEffect } from "react";
+import io from "socket.io-client";
+import Screen from "./components/Screen";
+import JoystickControl from "./components/JoystickControl";
+import "./App.css";
+import Buttons from "./components/Buttons";
 
-const socket = io('http://localhost:3001');
+const socket = io("http://localhost:3001");
 
-const App = () => {
+function App() {
   const [position, setPosition] = useState({ x: 150, y: 150 });
+  const [locked, setLocked] = useState(false);
 
   useEffect(() => {
-    socket.on('connect', () => {
-      console.log('✅ Client: connected to server', socket.id);
+    socket.on("robot-update", (state) => {
+      setPosition({ x: state.x, y: state.y });
+      setLocked(state.locked);
     });
-
-    socket.on('robot-update', (pos) => {
-      setPosition(pos);
-    });
-
-    socket.on('disconnect', () => {
-      console.log('❌ Client: disconnected from server');
-    });
-
     return () => {
-      socket.off('connect');
-      socket.off('robot-update');
-      socket.off('disconnect');
+      socket.off("robot-update");
     };
   }, []);
 
   const handleMove = ({ x, y }) => {
     const magnitude = Math.hypot(x, y);
-    if (magnitude === 0) return;
-  
+    if (magnitude === 0 || locked) return;
+
     const speed = magnitude * 2;
     const vx = (x / magnitude) * speed;
     const vy = -(y / magnitude) * speed;
-  
-    socket.emit('joystick-move', {
+
+    socket.emit("joystick-move", {
       vx,
       vy,
-      timestamp: Date.now()
+      timestamp: Date.now(),
     });
   };
-  
+
   const handleStop = () => {
-    socket.emit('joystick-stop');
+    if (locked) return;
+    socket.emit("joystick-stop");
   };
-  
+
+  const emergencyStop = () => {
+    socket.emit("emergency-stop");
+  };
+
+  const startRobot = () => {
+    socket.emit("start-robot");
+  };
 
   return (
     <div className="app-layout">
@@ -55,6 +55,11 @@ const App = () => {
         <Screen position={position} />
       </div>
       <div className="joystick-wrapper">
+        <Buttons
+          locked={locked}
+          onEmergencyStop={emergencyStop}
+          onStart={startRobot}
+        />
         <JoystickControl onMove={handleMove} onStop={handleStop} />
       </div>
     </div>
