@@ -10,7 +10,7 @@ const Buttons = ({ locked, onEmergencyStop, onStart }) => {
           onClick={onEmergencyStop}
           sx={{ width: '160px', fontWeight: 'bold' }}
         >
-          {locked ? '🔴 EMERGENCY STOP' : '🟢 ACTIVE'}
+          {locked ? '🔴 EMERGENCY STOP' : '🟢  EMERGENCY STOP'}
         </Button>
         <Button
           variant="contained"
